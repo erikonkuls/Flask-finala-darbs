@@ -1,0 +1,23 @@
+{% extends "layout2.html" %}
+
+{% block body %}
+<body>
+    <body>
+    <div class="login"></div>
+        <h1>Laipni lūdzam!</h1>
+    
+        <form action="/login" method="POST">
+          
+            
+            <input type="email" name="email" placeholder="Ievadi savu epastu" required>
+            <input type="password" name="password" placeholder="Ievadi savu paroli" required>
+       
+            <button type="submit">Saglabāt</button>
+        </form>
+    </div>
+    <div class="sakums">
+        <a href="/sakumlapa">Atpakaļ uz sākumu</a>
+    </div>
+    </body>
+</body>
+{% endblock %}
