@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
+import sqlite3
 import requests
 app = Flask(__name__)
 
@@ -6,7 +7,7 @@ app = Flask(__name__)
 import random
 import requests
 
-@app.route("/")
+@app.route("/sakumlapa")
 def home():
     quote = "No quote available"
 
@@ -70,6 +71,48 @@ def matematika2():
     return render_template("matematika2.html")
 
 
+@app.route("/login")
+def loigin():
+    return render_template("login.html")
+
+@app.route("/signin")
+def signin():
+    return render_template("signin.html")   
+
+@app.route("/sakumlapa")
+def sakumlapa():    
+    return render_template("sakumlapa.html")
+
+
+@app.route("/")
+def pievienoties():
+    return render_template("sakumlapa2.html")
+
+
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    if request.method == "POST":
+        name = request.form["name"]
+        surname = request.form["surname"]
+        phone = request.form["phone"]
+        email = request.form["email"]
+        password = request.form["password"]
+        if name:
+            conn = sqlite3.connect("./database.db")
+            conn.execute("INSERT INTO users (name, surname, phone, email, password) VALUES (?, ?, ?, ?, ?)", (name, surname, phone, email, password))
+            conn.commit()
+            conn.close()
+            return redirect("/")
+    
+
+
+     
+
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+
