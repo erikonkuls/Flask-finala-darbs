@@ -125,9 +125,15 @@ h1 {
   align-items: end;
 }
 
+.prieksmets {
+  text-align: center;
+  margin-top: 50px;
+}
 
-
-
+/* p{
+  font-size: 18px;
+  color: #333;
+} */
 
 
 
