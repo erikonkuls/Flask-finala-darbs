@@ -3,6 +3,8 @@ import requests
 app = Flask(__name__)
 
 
+import random
+import requests
 
 @app.route("/")
 def home():
@@ -10,17 +12,21 @@ def home():
 
     try:
         response = requests.get(
-            "https://api.npoint.io/81c1a80afd5f5d8bca52",
-            timeout=5
-        )
+            "https://api.npoint.io/970cafd42b7e63342718",timeout=5)
         response.raise_for_status()
+
         data = response.json()
-        quote = data.get("content", quote)
-    except Exception as e:
-        print(f"Error fetching quote: {e}")
+        if isinstance(data, dict):
+            quotes = data.get("quotes", [])
+            if quotes:
+                quote = random.choice(quotes)["text"]
+
+    except requests.RequestException as e:
+        app.logger.error(f"Error fetching quote: {e}")
         quote = "Could not fetch quote"
 
     return render_template("sakumlapa.html", quote=quote)
+
 
 
 @app.route("/fizika")
