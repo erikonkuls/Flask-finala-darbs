@@ -1,11 +1,25 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import requests
+from visits import create_visits_db, record_visit
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_for_sessions'
 
+# Initialize visits database
+create_visits_db()
 
 import random
 import requests
+
+@app.before_request
+def track_visit():
+    """Track every user visit to the database"""
+    user_id = session.get('user_id')
+    user_name = session.get('user_name', 'anonymous')
+    route = request.path
+    ip_address = request.remote_addr
+    
+    record_visit(user_id=user_id, user_name=user_name, route=route, ip_address=ip_address)
 
 @app.route("/sakumlapa")
 def home():
@@ -101,6 +115,11 @@ def login():
         user = cursor.fetchone()
         conn.close()
         if user:
+            user_id = user[0]
+            user_name = user[1] 
+            # Store in session for visit tracking
+            session['user_id'] = user_id
+            session['user_name'] = user_name
             return redirect("/sakumlapa")
         else:
             return redirect("/login")
@@ -119,6 +138,30 @@ def submit():
             conn.commit()
             conn.close()
             return redirect("/sakumlapa")
+
+
+@app.route("/visit-stats")
+def visit_stats():
+    """Display visit statistics from visits.db"""
+    from visits import get_all_user_visits, get_all_route_visits
+    user_visits = get_all_user_visits()
+    route_visits = get_all_route_visits()
+    return render_template("visit_stats.html", user_visits=user_visits, route_visits=route_visits)
+
+
+@app.route("/visit-history")
+def visit_history():
+    """Display recent visit history"""
+    from visits import get_visit_history
+    history = get_visit_history(limit=200)
+    return render_template("visit_history.html", history=history)
+
+
+@app.route("/logout")
+def logout():
+    """Logout user and clear session"""
+    session.clear()
+    return redirect("/")
     
 
 
