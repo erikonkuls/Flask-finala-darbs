@@ -5,7 +5,7 @@ from visits import create_visits_db, record_visit
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_for_sessions'
 
-# Initialize visits database
+
 create_visits_db()
 
 import random
@@ -16,10 +16,8 @@ def track_visit():
     """Track every user visit to the database"""
     user_id = session.get('user_id')
     user_name = session.get('user_name', 'anonymous')
-    route = request.path
-    ip_address = request.remote_addr
-    
-    record_visit(user_id=user_id, user_name=user_name, route=route, ip_address=ip_address)
+
+    record_visit(user_id=user_id, user_name=user_name)
 
 @app.route("/sakumlapa")
 def home():
@@ -27,7 +25,7 @@ def home():
 
     try:
         response = requests.get(
-            "https://api.npoint.io/970cafd42b7e63342718",timeout=5)
+            "https://api.npoint.io/2975a58862aa7fd69c98",timeout=2)
         response.raise_for_status()
 
         data = response.json()
